@@ -164,16 +164,11 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= 33 &&
             checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
         ) {
+            // Статус обновится в onResume, когда закроется системный диалог.
             requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
         } else if (Build.VERSION.SDK_INT >= 34) {
             startActivity(Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT, Uri.parse("package:$packageName")))
         }
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        refreshStatus()
     }
 
     // --- простые конструкторы UI ---
