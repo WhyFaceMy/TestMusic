@@ -18,7 +18,16 @@ jobs:
       - name: Тесты логики
         run: ./gradlew :core:test
       - name: Сборка APK
-        run: ./gradlew :app:assembleDebug
+        run: |
+          set -o pipefail
+          ./gradlew :app:assembleDebug --console=plain 2>&1 | tee build.log
+      - name: Ошибки сборки в аннотации
+        if: failure()
+        run: |
+          # Показываем ошибки компилятора и Gradle прямо на странице запуска.
+          grep -E '^e: |error:|ERROR:|AAPT|What went wrong' -A3 build.log | head -60 | while IFS= read -r line; do
+            echo "::error::$line"
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: karaoke-lyrics-debug-apk
